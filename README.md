@@ -1,1 +1,1 @@
-# movie-explorer-front-api
+# [Ссылка на макет](https://disk.yandex.com/d/LFbAJvBHXORD0w)

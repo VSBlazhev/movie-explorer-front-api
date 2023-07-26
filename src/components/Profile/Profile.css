@@ -1,0 +1,121 @@
+.account__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.account__hello {
+  font-family: 'Inter', Arial, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center;
+  color: #000000;
+  margin: 74px auto 0;
+}
+
+.account__form {
+  margin: 123px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.account__form-input-container {
+  display: flex;
+  flex-direction: row-reverse;
+  padding-bottom: 16px;
+  border-bottom: 1px solid grey;
+  min-width: 410px;
+  justify-content: space-between;
+}
+
+.account__form-input-container:last-of-type {
+  border: none;
+  margin-top: 17px;
+}
+
+.account__input-label {
+  font-family: 'Inter', Arial, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 13px;
+  color: #000000;
+}
+
+.account__input {
+  border: none;
+  outline: none;
+  text-align: right;
+  font-family: 'Inter', Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 13px;
+  text-align: right;
+  color: #000000;
+}
+
+.account__change {
+  margin-top: 220px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-bottom: 16px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  font-family: 'Inter', Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #000000;
+}
+
+.account__change_disabled{
+  opacity: 0.5;
+  color: #ee3465;
+}
+
+.account__change:hover {
+  opacity: 0.7;
+}
+
+.account__logut {
+  text-decoration: none;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  font-family: 'Inter', Arial, sans-serif;
+  text-align: center;
+  color: #ee3465;
+}
+
+.account__logut:hover {
+  opacity: 0.7;
+}
+
+@media screen and (max-width: 768px) {
+  .account__form {
+    margin: 96px auto;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .account__form {
+    margin: 80px auto;
+  }
+
+  .account__form-input-container {
+    min-width: 260px;
+  }
+
+  .account__change {
+    margin-top: 379px;
+  }
+}

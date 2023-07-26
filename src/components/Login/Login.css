@@ -1,0 +1,41 @@
+.login {
+  margin: 40px auto 0px;
+  display: flex;
+  flex-direction: column;
+  max-width: 396px;
+}
+
+.form__title_place_signin{
+  margin-bottom: 40px;
+}
+
+.form__button_place_signin {
+  margin-top: 179px;
+}
+
+@media screen and (max-width: 426px) {
+  .login {
+    max-width: 260px;
+    margin-top: 50px;
+  }
+
+  .form__button_place_signup {
+    margin-top: 157px;
+  }
+
+
+  .form__title_place_signin{
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .form__text{
+    display: flex;
+    justify-content: center;
+    font-size:12px ;
+  }
+
+  .form__button_place_signin{
+    margin-top: 267px;
+  }
+}
