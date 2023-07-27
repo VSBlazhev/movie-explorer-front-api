@@ -40,6 +40,7 @@ function App() {
   }, [isLoggedIn]);
 
   function handleRegister(inputs) {
+
     api
       .createUser({
         name: inputs.name,
