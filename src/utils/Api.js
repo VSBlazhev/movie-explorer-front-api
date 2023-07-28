@@ -126,7 +126,7 @@ export class Api {
   }
   
   const api = new Api({
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://http://blazhev.mov-exp.nomoreparties.sbs/',
     headers: {
       "Content-Type": "application/json",
     },
