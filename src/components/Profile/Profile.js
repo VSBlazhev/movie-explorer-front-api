@@ -1,14 +1,15 @@
 import "./Profile.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { useInput } from "../../utils/Validation";
 import InputErrorsBlock from "../InputErrorsBlock/InputErrorsBlock";
 
 
 function Profile(props) {
-  const { handlePatchUserInfo, handleLogout } = props;
+  const { handlePatchUserInfo, handleLogout,isSuccesful, errorMessage, setErrorMessage} = props;
 
   const currentUser = React.useContext(CurrentUserContext);
+
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -34,7 +35,14 @@ function Profile(props) {
     isUsedValue: currentUser.email,
   });
 
+  
 
+  useEffect(()=>{
+    setErrorMessage('')
+    /* crossOriginIsolated.log("я сработал") */
+   },[])
+
+   const buttonActive = name.isValid || email.isValid & (email.touched || name.touched)
 
 
   return (
@@ -67,14 +75,14 @@ function Profile(props) {
 
             <label className="account__input-label">Email</label>
           </div>
+          {isSuccesful ? <span>Данные успешно обновлены</span> : null}
+          {errorMessage ? <span className="form__button-error">{errorMessage}</span> : null}
           {email.touched && !email.isValid ? (
             <InputErrorsBlock errors={email.errors} />
           ) : null}
           <button
-            disabled={(name.touched && !name.isValid ) ||
-              (email.touched && !email.isValid)}
-            className={`account__change ${(name.touched && !name.isValid ) ||
-             (email.touched && !email.isValid) ? "account__change_disabled" : ""
+            disabled={ !buttonActive }
+            className={`account__change ${ !buttonActive ? "account__change_disabled" : ""
             }`}
 
             type='submit'
@@ -83,9 +91,9 @@ function Profile(props) {
           </button>
         </form>
 
-        <a href="" className="account__logut" onClick={logOut}>
+        <button href="" className="account__logut" onClick={logOut}>
           Выйти из аккаунта
-        </a>
+        </button>
       </div>
     </section>
   );

@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 import "./Register.css";
 import { useInput } from "../../utils/Validation";
 import InputErrorsBlock from "../InputErrorsBlock/InputErrorsBlock";
+import { useEffect } from "react";
 
 
 function Register(props) {
-  const { handleRegister, errorMessage } = props;
+  const { handleRegister, errorMessage} = props;
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -29,7 +30,7 @@ function Register(props) {
     isEmail: true,
   });
 
- 
+
 
   const password = useInput("", { required: true, min: 2, max: 30 });
 

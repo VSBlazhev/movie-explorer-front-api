@@ -16,7 +16,7 @@ function SearchForm(props) {
     { required: true }
   );
 
-  console.log(shortMoviesCheckboxState);
+
 
   function handleSubmit(e) {
     e.preventDefault();

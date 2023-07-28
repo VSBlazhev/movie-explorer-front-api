@@ -9,11 +9,12 @@ import Profile from "../Profile/Profile";
 import Login from "../Login/Login";
 import SavedMovies from "../SavedMovies/SavedMovies";
 import NotFoundPage from "../NotFoundPage/NotFoundPage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import React from "react";
 import api from "../../utils/Api";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import ProtectedRouteElement from "../ProtectedRouteElement/ProtectedRouteElement";
+import Preloader from "../Preloader/Preloader";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -24,20 +25,42 @@ function App() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [isSuccesful, setSuccefull] = useState(false)
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.checkAuth().then((currentUser) => {
-      setLoggedIn(true);
-      setCurrentUser(currentUser.data);
-    });
+    checkAuth()
+  }, [currentUser]);
 
-    api.getSavedMovies().then((res) => {
-      setSavedMovies(res);
-    });
 
-    console.log(savedMovies);
-  }, [isLoggedIn]);
+  useEffect(()=>{
+    if(isLoggedIn){
+      api.getSavedMovies()
+      .then((res)=>{
+        setSavedMovies(res)
+      })
+      api.getUserId()
+      .then((currentUser)=>{
+        setCurrentUser(currentUser.data)
+      })
+
+    }
+  },[isLoggedIn])
+
+  function checkAuth(){
+
+    api.checkAuth()
+    .then((data)=>{
+      if(data){
+        setLoggedIn(true)
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      setLoggedIn(false)
+    })
+  }
 
   function handleRegister(inputs) {
 
@@ -48,8 +71,7 @@ function App() {
         password: inputs.password,
       })
       .then(() => {
-        navigate("/signin", { replace: true });
-        console.log("успех");
+        handleLogin(inputs)
       })
       .catch((err) => {
         if (err === 409) {
@@ -65,6 +87,7 @@ function App() {
       .loginUser({ email: inputs.email, password: inputs.password })
       .then(() => {
         setLoggedIn(true);
+        navigate("/movies", { replace: true });
       })
       .catch((err) => {
         console.log(err);
@@ -75,7 +98,7 @@ function App() {
       .then((currentUser) => {
         console.log(currentUser);
         setCurrentUser(currentUser.data);
-        navigate("/movies", { replace: true });
+        
       })
       .catch((err) => {
         if (err === 401) {
@@ -91,6 +114,7 @@ function App() {
     then(() => {
       setLoggedIn(false);
       localStorage.clear();
+      navigate('/', {replace: true})
     });
   }
 
@@ -99,8 +123,16 @@ function App() {
       .patchUserInfo({ name: inputs.name, email: inputs.email })
       .then(() => {
         setCurrentUser({ name: inputs.name, email: inputs.email });
+        setSuccefull(true)
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setSuccefull(false)
+        if (err === 409) {
+          setErrorMessage("Email уже используется");
+        } else {
+          console.log(err);
+        }
+      });
   }
 
   function handleSaveMovie(card) {
@@ -116,8 +148,6 @@ function App() {
     const movieForDel = savedMovies.find(
       (el) => el.movieId === movie.id || el.movieId === movie.movieId
     );
-    console.log(movieForDel);
-    console.log(savedMovies);
     api
       .deleteMovie(movieForDel._id)
       .then(() => {
@@ -134,6 +164,8 @@ function App() {
         console.log(err);
       });
   }
+
+  
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -176,6 +208,9 @@ function App() {
                 handlePatchUserInfo={handlePatchUserInfo}
                 handleLogout={handleLogout}
                 element={Profile}
+                isSuccesful={isSuccesful}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
               />
             }
           />

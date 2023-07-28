@@ -94,7 +94,12 @@
   font-family: 'Inter', Arial, sans-serif;
   text-align: center;
   color: #ee3465;
+  outline: none;
+  border: none;
+  background-color: transparent;
 }
+
+
 
 .account__logut:hover {
   opacity: 0.7;

@@ -44,16 +44,14 @@ function SavedMovies(props) {
   }
 
   function handleSubmit(params) {
-    
+
     const movieList = filterMoviesByReq(savedMovies, params);
       if (movieList.length === 0){
         setErrorMessage('По вашему запросу ничего не найдено')
-
-
        } else {
       handleSetfilteredMovies(movieList, params, shortMoviesCheckboxState);
       setMoviesToRender(filteredMovies)
-
+      
     }
   }
 
@@ -64,23 +62,12 @@ function SavedMovies(props) {
     } else {
       setMoviesToRender(filterShortMovies(filteredMovies));
     }
-    
-    localStorage.setItem("savedShortMovieCheckBoxState", !shortMoviesCheckboxState);
   }
   
-  useEffect(() => {
-    if (localStorage.getItem("savedShortMovieCheckBoxState") === "true") {
-      setShortMoviesCheckBoxState(true);
-      setMoviesToRender(filterShortMovies(savedMovies));
-    } else {
-      setShortMoviesCheckBoxState(false);
-      setMoviesToRender(savedMovies);
-    }
-  }, []);
 
   useEffect(()=>{
     setMoviesToRender(savedMovies)
-  })
+  },[])
 
   return (
     <section className="saved-movies">
