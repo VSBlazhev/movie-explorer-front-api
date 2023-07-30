@@ -104,5 +104,6 @@ export const useInput = (initialValue, schema) => {
 
   const validationResult = useValidation(value, schema);
 
-  return { value, onChange, ...validationResult, touched };
+
+  return { value, onChange, ...validationResult, touched, resetValidation };
 };

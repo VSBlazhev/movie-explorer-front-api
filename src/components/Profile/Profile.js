@@ -35,12 +35,11 @@ function Profile(props) {
     isUsedValue: currentUser.email,
   });
 
-  
+
 
   useEffect(()=>{
     setErrorMessage('')
-    /* crossOriginIsolated.log("я сработал") */
-   },[])
+   },[currentUser])
 
    const buttonActive = name.isValid || email.isValid & (email.touched || name.touched)
 

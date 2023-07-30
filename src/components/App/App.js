@@ -109,6 +109,11 @@ function App() {
         setCurrentUser({ name: inputs.name, email: inputs.email });
         setSuccefull(true);
       })
+      .finally(()=>{
+        setTimeout(()=>{
+          setSuccefull(false)
+        }, 5000)
+      })
       .catch((err) => {
         setSuccefull(false);
         if (err === 409) {
