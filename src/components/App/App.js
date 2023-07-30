@@ -14,56 +14,43 @@ import React from "react";
 import api from "../../utils/Api";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import ProtectedRouteElement from "../ProtectedRouteElement/ProtectedRouteElement";
-import Preloader from "../Preloader/Preloader";
+
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
-
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState();
 
   const [savedMovies, setSavedMovies] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [isSuccesful, setSuccefull] = useState(false)
+  const [isSuccesful, setSuccefull] = useState(false);
+
+  const [isLoading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuth()
+    api
+      .checkAuth()
+      .then((currentUser) => {
+        
+        setCurrentUser(currentUser.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  
+  useEffect(() => {
+    if (currentUser) {
+      api.getSavedMovies().then((res) => {
+        setSavedMovies(res);
+      });
+    }
   }, [currentUser]);
 
-
-  useEffect(()=>{
-    if(isLoggedIn){
-      api.getSavedMovies()
-      .then((res)=>{
-        setSavedMovies(res)
-      })
-      api.getUserId()
-      .then((currentUser)=>{
-        setCurrentUser(currentUser.data)
-      })
-
-    }
-  },[isLoggedIn])
-
-  function checkAuth(){
-
-    api.checkAuth()
-    .then((data)=>{
-      if(data){
-        setLoggedIn(true)
-      }
-    })
-    .catch((err)=>{
-      console.log(err)
-      setLoggedIn(false)
-    })
-  }
-
   function handleRegister(inputs) {
-
     api
       .createUser({
         name: inputs.name,
@@ -71,7 +58,7 @@ function App() {
         password: inputs.password,
       })
       .then(() => {
-        handleLogin(inputs)
+        handleLogin(inputs);
       })
       .catch((err) => {
         if (err === 409) {
@@ -85,10 +72,7 @@ function App() {
   function handleLogin(inputs) {
     api
       .loginUser({ email: inputs.email, password: inputs.password })
-      .then(() => {
-        setLoggedIn(true);
-        navigate("/movies", { replace: true });
-      })
+      .then(() => {})
       .catch((err) => {
         console.log(err);
       });
@@ -98,7 +82,8 @@ function App() {
       .then((currentUser) => {
         console.log(currentUser);
         setCurrentUser(currentUser.data);
-        
+        setLoggedIn(true);
+        navigate("/movies", { replace: true });
       })
       .catch((err) => {
         if (err === 401) {
@@ -110,11 +95,10 @@ function App() {
   }
 
   function handleLogout() {
-    api.logOut().
-    then(() => {
+    api.logOut().then(() => {
       setLoggedIn(false);
       localStorage.clear();
-      navigate('/', {replace: true})
+      navigate("/", { replace: true });
     });
   }
 
@@ -123,10 +107,10 @@ function App() {
       .patchUserInfo({ name: inputs.name, email: inputs.email })
       .then(() => {
         setCurrentUser({ name: inputs.name, email: inputs.email });
-        setSuccefull(true)
+        setSuccefull(true);
       })
       .catch((err) => {
-        setSuccefull(false)
+        setSuccefull(false);
         if (err === 409) {
           setErrorMessage("Email уже используется");
         } else {
@@ -148,6 +132,7 @@ function App() {
     const movieForDel = savedMovies.find(
       (el) => el.movieId === movie.id || el.movieId === movie.movieId
     );
+
     api
       .deleteMovie(movieForDel._id)
       .then(() => {
@@ -159,18 +144,17 @@ function App() {
           }
         });
         setSavedMovies(newMoviesList);
+        console.log(newMoviesList);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  
-
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__container">
-        <Header isLoggedIn={isLoggedIn} />
+        <Header isLoggedIn={!!currentUser} />
         <Routes>
           <Route exact path="/" element={<Main />} />
 
@@ -178,12 +162,15 @@ function App() {
             path="/movies"
             element={
               <ProtectedRouteElement
-                isLoggedIn={isLoggedIn}
-                saveMovie={handleSaveMovie}
-                deleteMovie={handleDeleteMovie}
-                element={Movies}
-                savedMovies={savedMovies}
-              />
+                isLoading={isLoading}
+                isLoggedIn={!!currentUser}
+              >
+                <Movies
+                  saveMovie={handleSaveMovie}
+                  deleteMovie={handleDeleteMovie}
+                  savedMovies={savedMovies}
+                />
+              </ProtectedRouteElement>
             }
           />
 
@@ -191,12 +178,15 @@ function App() {
             path="/saved-movies"
             element={
               <ProtectedRouteElement
-                isLoggedIn={isLoggedIn}
-                savedMovies={savedMovies}
-                deleteMovie={handleDeleteMovie}
-                saveMovie={handleSaveMovie}
-                element={SavedMovies}
-              />
+                isLoading={isLoading}
+                isLoggedIn={!!currentUser}
+              >
+                <SavedMovies
+                  savedMovies={savedMovies}
+                  deleteMovie={handleDeleteMovie}
+                  saveMovie={handleSaveMovie}
+                />
+              </ProtectedRouteElement>
             }
           />
 
@@ -204,21 +194,24 @@ function App() {
             path="/profile"
             element={
               <ProtectedRouteElement
-                isLoggedIn={isLoggedIn}
-                handlePatchUserInfo={handlePatchUserInfo}
-                handleLogout={handleLogout}
-                element={Profile}
-                isSuccesful={isSuccesful}
-                errorMessage={errorMessage}
-                setErrorMessage={setErrorMessage}
-              />
+                isLoading={isLoading}
+                isLoggedIn={!!currentUser}
+              >
+                <Profile
+                  handlePatchUserInfo={handlePatchUserInfo}
+                  handleLogout={handleLogout}
+                  isSuccesful={isSuccesful}
+                  errorMessage={errorMessage}
+                  setErrorMessage={setErrorMessage}
+                />
+              </ProtectedRouteElement>
             }
           />
 
           <Route
             path="/signup"
             element={
-              isLoggedIn ? (
+              !!currentUser ? (
                 <Navigate to="/" replace />
               ) : (
                 <Register
@@ -232,7 +225,7 @@ function App() {
           <Route
             path="/signin"
             element={
-              isLoggedIn ? (
+              !!currentUser ? (
                 <Navigate to="/" replace />
               ) : (
                 <Login errorMessage={errorMessage} handleLogin={handleLogin} />

@@ -20,6 +20,7 @@ function MovieCard(props) {
 
  function handleDislike (){
     deleteMovie(card)
+    console.log('кнопка уджаления нажалась')
   };
 
   const location = useLocation();

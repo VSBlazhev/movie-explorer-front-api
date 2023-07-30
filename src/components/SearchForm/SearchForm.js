@@ -4,15 +4,14 @@ import { useInput } from "../../utils/Validation";
 import { useLocation } from "react-router-dom";
 import InputErrorsBlock from "../InputErrorsBlock/InputErrorsBlock";
 
-function SearchForm(props) {
-  const { searchSubmit, handleShortFilms, shortMoviesCheckboxState } = props;
+function SearchForm({ searchSubmit, handleShortFilms, shortMoviesCheckboxState, value = '' }) {
 
   const location = useLocation();
 
   const currentLocation = location.pathname;
 
   const search = useInput(
-    currentLocation === "/movies" ? localStorage.getItem("movieSearch") : "",
+    currentLocation === "/movies" ? localStorage.getItem("movieSearch") : value,
     { required: true }
   );
 
@@ -21,6 +20,7 @@ function SearchForm(props) {
   function handleSubmit(e) {
     e.preventDefault();
     searchSubmit(search.value);
+    console.log('клик на кнопку')
   }
 
   return (
@@ -41,7 +41,7 @@ function SearchForm(props) {
                 !search.isValid ? "search-form__button-submit_disabled" : ""
               }`}
               type="submit"
-              disabled={search.isValid ? false : true}
+              disabled={!search.isValid}
             >
               <img src={find} alt="Найти" />
             </button>
